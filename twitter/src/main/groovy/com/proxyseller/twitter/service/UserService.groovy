@@ -3,6 +3,7 @@ package com.proxyseller.twitter.service
 import com.proxyseller.twitter.model.User
 import com.proxyseller.twitter.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
@@ -11,7 +12,11 @@ class UserService {
     @Autowired
     UserRepository userRepository
 
+    @Autowired
+    PasswordEncoder passwordEncoder
+
     User createUser(User user) {
+        user.password = passwordEncoder.encode(user.password)
         return userRepository.save(user)
     }
 
@@ -22,8 +27,11 @@ class UserService {
 
     User updateUser(String id, User updatedUser) {
         User user = userRepository.findById(id).orElseThrow { new RuntimeException("User not found") }
+        if (updatedUser.password != null && !updatedUser.password.isEmpty()) {
+            user.password = passwordEncoder.encode(updatedUser.password)
+        }
         user.username = updatedUser.username
-        user.password = updatedUser.password
+        user.email = updatedUser.email
         return userRepository.save(user)
     }
 

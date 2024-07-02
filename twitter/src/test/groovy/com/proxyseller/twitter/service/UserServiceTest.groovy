@@ -3,26 +3,30 @@ package com.proxyseller.twitter.service
 import com.proxyseller.twitter.model.User
 import com.proxyseller.twitter.repository.UserRepository
 import spock.lang.Specification
+import org.springframework.security.crypto.password.PasswordEncoder
 
 class UserServiceTest extends Specification {
 
     UserService userService
     UserRepository userRepository = Mock()
+    PasswordEncoder passwordEncoder = Mock()
 
     def setup() {
         userService = new UserService()
         userService.userRepository = userRepository
+        userService.passwordEncoder = passwordEncoder
     }
 
-    def "test create user"() {
+    def "test create user with hashed password"() {
         given:
-        User user = new User(username: "testuser", password: "password")
+        User user = new User(username: "testuser", password: "password", email: "testuser@example.com")
+        passwordEncoder.encode("password") >> "hashed_password"
 
         when:
         userService.createUser(user)
 
         then:
-        1 * userRepository.save(user)
+        1 * userRepository.save({ it.password == "hashed_password" })
     }
 
     def "test find user by id"() {
@@ -44,6 +48,7 @@ class UserServiceTest extends Specification {
         User updatedUser = new User(username: "updateduser", password: "newpassword")
         User existingUser = new User(id: id, username: "testuser", password: "password")
         userRepository.findById(id) >> Optional.of(existingUser)
+        passwordEncoder.encode("newpassword") >> "hashed_newpassword"
 
         when:
         userService.updateUser(id, updatedUser)
@@ -51,7 +56,7 @@ class UserServiceTest extends Specification {
         then:
         1 * userRepository.save(existingUser)
         existingUser.username == "updateduser"
-        existingUser.password == "newpassword"
+        existingUser.password == "hashed_newpassword"
     }
 
     def "test delete user"() {
