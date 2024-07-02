@@ -17,7 +17,7 @@ services:
     depends_on:
       - mongo
     environment:
-      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/db
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/twitter
 
 volumes:
   mongo-data:

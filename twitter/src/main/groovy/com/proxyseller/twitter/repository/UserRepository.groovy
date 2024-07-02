@@ -1,8 +1,7 @@
-package com.proxyseller.twitter.repositories
+package com.proxyseller.twitter.repository
 
-import com.proxyseller.twitter.models.User
+import com.proxyseller.twitter.model.User
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface UserRepository extends MongoRepository<User, String> {
-    User findByUsername(String username)
 }
