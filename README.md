@@ -141,7 +141,7 @@ curl -X DELETE "http://localhost:8080/api/comments/1"
 ```
 ### Get User Feed
 ```
-curl -X GET "http://localhost:8080/api/posts/feed?userIds=1"
+curl -X GET "http://localhost:8080/api/posts/feed/1"
 ```
 ### Get User's Posts
 ```
