@@ -49,9 +49,9 @@ class PostController {
         return ResponseEntity.ok(post)
     }
 
-    @GetMapping("/feed")
-    ResponseEntity<List<Post>> getUserFeed(@RequestParam List<String> userIds) {
-        List<Post> feed = postService.getUserFeed(userIds)
+    @GetMapping("/feed/{userId}")
+    ResponseEntity<List<Post>> getUserFeed(@PathVariable String userId) {
+        List<Post> feed = postService.getUserFeed(userId)
         return ResponseEntity.ok(feed)
     }
 

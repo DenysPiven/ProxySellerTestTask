@@ -1,16 +1,21 @@
 package com.proxyseller.twitter.service
 
 import com.proxyseller.twitter.model.Post
+import com.proxyseller.twitter.model.User
 import com.proxyseller.twitter.repository.PostRepository
+import com.proxyseller.twitter.repository.UserRepository
 import spock.lang.Specification
 
 class PostServiceTest extends Specification {
 
     PostRepository postRepository = Mock()
+    UserRepository userRepository = Mock()
     PostService postService
 
     def setup() {
-        postService = new PostService(postRepository)
+        postService = new PostService()
+        postService.postRepository = postRepository
+        postService.userRepository = userRepository
     }
 
     def "test create post"() {
@@ -86,25 +91,39 @@ class PostServiceTest extends Specification {
 
     def "test get user feed"() {
         given:
-        List<Post> posts = [new Post(id: "1", userId: "user1", content: "Hello World")]
-        postRepository.findByUserIdIn(["user1"]) >> posts
+        String userId = "1"
+        User user = new User(id: userId, following: ["2", "3"])
+        List<Post> posts = [
+                new Post(id: "1", userId: "2", content: "Post from user 2"),
+                new Post(id: "2", userId: "3", content: "Post from user 3")
+        ]
 
         when:
-        List<Post> result = postService.getUserFeed(["user1"])
+        userRepository.findById(userId) >> Optional.of(user)
+        postRepository.findByUserIdIn(user.following) >> posts
+
+        List<Post> result = postService.getUserFeed(userId)
 
         then:
+        result.size() == 2
         result == posts
     }
 
     def "test get user posts"() {
         given:
-        List<Post> posts = [new Post(id: "1", userId: "user1", content: "Hello World")]
-        postRepository.findByUserId("user1") >> posts
+        String userId = "1"
+        List<Post> posts = [
+                new Post(id: "1", userId: userId, content: "User's post 1"),
+                new Post(id: "2", userId: userId, content: "User's post 2")
+        ]
 
         when:
-        List<Post> result = postService.getUserPosts("user1")
+        postRepository.findByUserId(userId) >> posts
+
+        List<Post> result = postService.getUserPosts(userId)
 
         then:
+        result.size() == 2
         result == posts
     }
 }

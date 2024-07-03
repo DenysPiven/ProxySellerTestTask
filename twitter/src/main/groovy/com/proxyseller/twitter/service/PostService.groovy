@@ -1,19 +1,20 @@
 package com.proxyseller.twitter.service
 
 import com.proxyseller.twitter.model.Post
+import com.proxyseller.twitter.model.User
 import com.proxyseller.twitter.repository.PostRepository
+import com.proxyseller.twitter.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class PostService {
 
+    @Autowired
     PostRepository postRepository
 
     @Autowired
-    PostService(PostRepository postRepository) {
-        this.postRepository = postRepository
-    }
+    UserRepository userRepository
 
     Post createPost(Post post) {
         return postRepository.save(post)
@@ -51,8 +52,9 @@ class PostService {
         return post
     }
 
-    List<Post> getUserFeed(List<String> userIds) {
-        return postRepository.findByUserIdIn(userIds)
+    List<Post> getUserFeed(String userId) {
+        User user = userRepository.findById(userId).orElseThrow { new RuntimeException("User not found") }
+        return postRepository.findByUserIdIn(user.following)
     }
 
     List<Post> getUserPosts(String userId) {
