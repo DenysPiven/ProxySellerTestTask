@@ -37,11 +37,33 @@ This project is a simple Twitter clone implemented using Groovy and Spring Boot.
    The application will be available at `http://localhost:8080`.
 
 4. **Access Swagger API documentation:**
-   Swagger UI is available at `http://localhost:8080/swagger`.
+   Swagger UI is available at `http://localhost:8080/swagger-ui/index.html`.
 
 ## API Endpoints
 
 Here are some example API requests you can use to test the application.
+
+### Register a User
+```
+curl -X POST http://localhost:8080/api/auth/register \
+-H "Content-Type: application/json" \
+-d '{
+"id": "1",
+"username": "testuser",
+"password": "password",
+"email": "testuser@example.com"
+}'
+```
+
+### Login a User
+```
+curl -X POST http://localhost:8080/api/auth/login \
+-H "Content-Type: application/json" \
+-d '{
+"username": "testuser",
+"password": "password"
+}'
+```
 
 ### Create a User
 ```
