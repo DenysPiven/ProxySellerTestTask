@@ -25,6 +25,14 @@ class UserService {
         return userOptional.orElseThrow { new RuntimeException("User not found") }
     }
 
+    Optional<User> findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+    }
+
+    Optional<User> findUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+    }
+
     User updateUser(String id, User updatedUser) {
         User user = userRepository.findById(id).orElseThrow { new RuntimeException("User not found") }
         if (updatedUser.password != null && !updatedUser.password.isEmpty()) {
